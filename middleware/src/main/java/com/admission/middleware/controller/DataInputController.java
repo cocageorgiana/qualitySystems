@@ -1,7 +1,10 @@
 package com.admission.middleware.controller;
 
+import com.admission.middleware.model.Admitere;
 import com.admission.middleware.model.Student;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -11,90 +14,143 @@ public class DataInputController {
     @Autowired
     RestTemplate restTemplate;
 
-    @RequestMapping(path = "student/{id}", method = RequestMethod.GET, produces = "application/json")
+    String url = "http://admissioncontest.us-east-2.elasticbeanstalk.com/AdmissionContestServlet";
+
+    @RequestMapping(path = "students/{id}", method = RequestMethod.GET, produces = "application/json")//merge
     public Student getStudent(@PathVariable("id") Integer id) {
-        Student student;
 
-        String url = "" + id;
+        String param = "{\n" +
+                "\t\"operation\": \"select\",\n" +
+                "\t\"from\": \"students\",\n" +
+                "\t\"cond1\": {\n" +
+                "\t\t\"key\": \"id\",\n" +
+                "\t\t\"operator\": \"=\",\n" +
+                "\t\t\"value\": \"" + id + "\"\n" +
+                "\t\t}\n" +
+                "}";
 
-        student = (Student) restTemplate.getForObject(url, Student.class);
-        return student;
-    }
-
-    @RequestMapping(path = "student", method = RequestMethod.GET, produces = "application/json")
-    public Student[] getAllStudents() {
         Student[] student;
+        student = (Student[]) restTemplate.postForObject(url, param, Student[].class);
+        return student[0];
+    }
 
-        String url = "" ;
-
-        student =  restTemplate.getForObject(url, Student[].class);
+    @RequestMapping(path = "students", method = RequestMethod.POST)//merge
+    public Student[] getAllStudents() {
+        String param = " {\n" +
+                "          \t\"operation\": \"select\",\n" +
+                "          \t\"from\": \"students\"\n" +
+                "          }";
+        Student[] student;
+        student = (Student[]) restTemplate.postForObject(url, param, Student[].class);
         return student;
     }
 
-    @RequestMapping(path = "student", method = RequestMethod.POST, produces = "application/json")
-    public Student createStudent(@RequestParam(name = "first_name") String first_name,
-                                 @RequestParam(name = "last_name") String last_name,
-                                 @RequestParam(name = "medie_bac") Double medie_bac,
-                                 @RequestParam(name = "nota_examen") Double nota_examen,
-                                 @RequestParam(name = "medie") Double medie) {
-        Student student = new Student();
-        student.setFirst_name(first_name);
-        student.setLast_name(last_name);
-        student.setMedie(medie);
-        student.setNota_examen(nota_examen);
-        student.setMedie_bac(medie_bac);
-        String url = "";
+    @RequestMapping(path = "createStudent", method = RequestMethod.POST, produces = "application/json") //merge
+    public ResponseEntity<Void> createStudent(@RequestParam(name = "first_name") String first_name,
+                                              @RequestParam(name = "last_name") String last_name,
+                                              @RequestParam(name = "medie_bac") Double medie_bac,
+                                              @RequestParam(name = "nota_examen") Double nota_examen) {
 
-        student = (Student) restTemplate.postForObject(url, student, Student.class);
-        return student;
+        String request = "{\n" +
+                "\t\"operation\": \"insert\",\n" +
+                "\t\"into\": \"students\",\n" +
+                "\t\"values\": {\n" +
+                "\t\t\"first_name\": \"" + first_name + "\",\n" +
+                "\t\t\"last_name\": \"" + last_name + "\",\n" +
+                "\t\t\"medie_bac\": " + medie_bac + ",\n" +
+                "\t\t\"nota_examen\": " + nota_examen + "\n" +
+                "\t}\n" +
+                "}";
+
+        String response;
+        response = (String) restTemplate.postForObject(url, request, String.class);
+
+        if (response.contains("1") && response.contains("-1") == false) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
-    @RequestMapping(path = "student/{id}", method = RequestMethod.PUT, produces = "application/json")
-    public Student updateStudent(@PathVariable(name = "id") Integer id,
-                                 @RequestParam(name = "first_name") String first_name,
-                                 @RequestParam(name = "last_name") String last_name,
-                                 @RequestParam(name = "medie_bac") Double medie_bac,
-                                 @RequestParam(name = "nota_examen") Double nota_examen,
-                                 @RequestParam(name = "medie") Double medie) {
-        Student student = new Student();
-        student.setFirst_name(first_name);
-        student.setLast_name(last_name);
-        student.setMedie(medie);
-        student.setNota_examen(nota_examen);
-        student.setMedie_bac(medie_bac);
-        String url = "" + id;
+    @RequestMapping(path = "students/{id}", method = RequestMethod.PUT, produces = "application/json") //merge
+    public ResponseEntity<Void> updateStudent(@PathVariable(name = "id") Integer id,
+                                              @RequestParam(name = "first_name") String first_name,
+                                              @RequestParam(name = "last_name") String last_name,
+                                              @RequestParam(name = "medie_bac") Double medie_bac,
+                                              @RequestParam(name = "nota_examen") Double nota_examen) {
+        String request = "{\n" +
+                "\t\"operation\": \"update\",\n" +
+                "\t\"into\": \"students\",\n" +
+                "\t\"values\": {\n" +
+                "\t\t\"first_name\": \"" + first_name + "\",\n" +
+                "\t\t\"last_name\": \"" + last_name + "\",\n" +
+                "\t\t\"medie_bac\": " + medie_bac + ",\n" +
+                "\t\t\"nota_examen\": " + nota_examen + "\n" +
+                "\t}\n,\"" +
+                "cond1\": {\n" +
+                "\t\t\"key\": \"id\",\n" +
+                "\t\t\"operator\": \"=\",\n" +
+                "\t\t\"value\": " + id + "\n" +
+                "\t\t}" +
+                "}";
 
-        student = (Student) restTemplate.postForObject(url, student, Student.class);
-        return student;
+        String response;
+        response = (String) restTemplate.postForObject(url, request, String.class);
+
+        if (response.contains("1") && response.contains("-1") == false) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
-    @RequestMapping(path = "student/{id}", method = RequestMethod.DELETE, produces = "application/json")
-    public Student deleteStudent(@PathVariable("id") Integer id) {
-        Student student;
+    @RequestMapping(path = "students/{id}", method = RequestMethod.DELETE, produces = "application/json") //merge
+    public ResponseEntity<Void> deleteStudent(@PathVariable("id") Integer id) {
+        String param = "{\n" +
+                "\t\"operation\": \"delete\",\n" +
+                "\t\"from\": \"students\",\n" +
+                "\t\"cond1\": {\n" +
+                "\t\t\"key\": \"id\",\n" +
+                "\t\t\"operator\": \"=\",\n" +
+                "\t\t\"value\": \"" + id + "\"\n" +
+                "\t\t}\n" +
+                "}";
 
-        String url = "" + id;
+        String response;
+        response = (String) restTemplate.postForObject(url, param, String.class);
 
-        student = (Student) restTemplate.getForObject(url, Student.class);
-        return student;
+        if (response.contains("1") && response.contains("-1") == false) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
-    @RequestMapping(path = "budget", method = RequestMethod.GET, produces = "application/json")
-    public Integer getNrBudget() {
-        Integer nrBudget;
+    @RequestMapping(path = "budget", method = RequestMethod.GET)
+    public Integer getNoBudget() {
+        String request = "{\n" +
+                " \"operation\": \"select\",\n" +
+                " \"from\": \"criterii_insert_students\"\n" +
+                "}";
 
-        String url = "";
+        RestTemplate restTemplate = new RestTemplate();
 
-        nrBudget = (Integer) restTemplate.getForObject(url, Integer.class);
-        return nrBudget;
+        Admitere admitere = restTemplate.postForObject(url, request, Admitere.class);
+
+        return admitere.getNr_locuri_buget();
     }
 
-    @RequestMapping(path = "tax", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(path = "tax", method = RequestMethod.GET)
     public Integer getTaxNo() {
-        Integer nrTaxes;
+        String request = "{\n" +
+                " \"operation\": \"select\",\n" +
+                " \"from\": \"criterii_insert_students\"\n" +
+                "}";
 
-        String url = "";
+        RestTemplate restTemplate = new RestTemplate();
 
-        nrTaxes = (Integer) restTemplate.getForObject(url, Integer.class);
-        return nrTaxes;
+        Admitere admitere = restTemplate.postForObject(url, request, Admitere.class);
+
+        return admitere.getNr_locuri_buget();
     }
 }

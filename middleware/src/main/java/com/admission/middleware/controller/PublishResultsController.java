@@ -4,6 +4,7 @@ import com.admission.middleware.file.WriteExcel;
 import com.admission.middleware.file.WriteFile;
 import com.admission.middleware.model.ClassifyStudent;
 import com.admission.middleware.model.Student;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,40 +17,47 @@ import java.util.List;
 
 @RestController
 public class PublishResultsController {
+    @Autowired
+    DataInputController dataInputController;
 
     @RequestMapping(path = "results", method = RequestMethod.GET, produces = "application/json")
     public List<ClassifyStudent> classifyStudent() {
-        List<ClassifyStudent> classifyStudents = new ArrayList<>();
-        DataInputController dataInputController = new DataInputController();
-        Student[] students = dataInputController.getAllStudents();
         WriteFile file = new WriteFile();
         WriteExcel excel = new WriteExcel();
 
-        Integer buget = dataInputController.getNrBudget();//apelezi
-        Integer fee = dataInputController.getTaxNo();//apelezi;
+        List<ClassifyStudent> classifyStudents = new ArrayList<>();
 
-        //sortati toti studentii dupa medie
+        Student[] students = dataInputController.getAllStudents();
+
+        //Integer buget = dataInputController.getNoBudget();//apelezi
+        //Integer fee = dataInputController.getTaxNo();//apelezi;
+
+        Integer buget = 270;
+        Integer fee = 90;
+
         Arrays.sort(students, Collections.reverseOrder());
-        for (int i = 0; i < buget; i++) {
-            ClassifyStudent classifyStudent = new ClassifyStudent(students[i]);
-            classifyStudent.setClassification("budget");
+
+
+        int iterator = 0;
+
+        while (iterator < Array.getLength(students)) {
+
+            ClassifyStudent classifyStudent = new ClassifyStudent(students[iterator]);
+
+            if (buget > 0) {
+                classifyStudent.setClassification("budget");
+                buget--;
+            } else if (fee > 0) {
+                classifyStudent.setClassification("fee");
+            } else {
+                classifyStudent.setClassification("respins");
+            }
             classifyStudents.add(classifyStudent);
+            iterator++;
         }
 
-        for (int i = buget; i < buget + fee; i++) {
-            ClassifyStudent classifyStudent = new ClassifyStudent(students[i]);
-            classifyStudent.setClassification("fee");
-            classifyStudents.add(classifyStudent);
-        }
-
-        for (int i = buget + fee; i < Array.getLength(students); i++) {
-            ClassifyStudent classifyStudent = new ClassifyStudent(students[i]);
-            classifyStudent.setClassification("respins");
-            classifyStudents.add(classifyStudent);
-
-        }
-        excel.storeIntoExcel(classifyStudents);
         file.writeFile(classifyStudents);
+        excel.storeIntoExcel(classifyStudents);
         return classifyStudents;
     }
 

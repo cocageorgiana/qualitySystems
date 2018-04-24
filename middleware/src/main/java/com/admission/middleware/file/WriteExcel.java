@@ -25,19 +25,24 @@ public class WriteExcel {
 
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet("Student List");
-        Object[][] datatypes = {
-                {"Id", "First Name", "Last Name",
-                        "Medie Bac", "Nota Examen", "Medie","Clasificare"}
-        };
+        Object[][] datatypes = new Object[classifyStudentList.size() + 1][7];
+
+        datatypes[0][0] = "Id";
+        datatypes[0][1] = "First Name";
+        datatypes[0][2] = "Last Name";
+        datatypes[0][3] = "Medie Bac";
+        datatypes[0][4] = "Nota Examen";
+        datatypes[0][5] = "Medie";
+        datatypes[0][6] = "Clasificare";
 
         int position = 1;
         for (ClassifyStudent iterator : classifyStudentList) {
             datatypes[position][0] = iterator.getId();
             datatypes[position][1] = iterator.getFirst_name();
             datatypes[position][2] = iterator.getLast_name();
-            datatypes[position][3] = iterator.getMedie_bac();
-            datatypes[position][4] = iterator.getNota_examen();
-            datatypes[position][5] = iterator.getMedie();
+            datatypes[position][3] = iterator.getMedie_bac().toString();
+            datatypes[position][4] = iterator.getNota_examen().toString();
+            datatypes[position][5] = iterator.getMedie().toString();
             datatypes[position][6] = iterator.getClassification();
 
 
