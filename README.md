@@ -1,7 +1,7 @@
 # qualitySystems
 The quality of software systems
 
-Pentru a returna toti studentii este necesar sa fie accesat endpointul: http://localhost:8099/middleware/results care va produce un JSON format, fisier text si Excel file.
+Pentru a returna toti studentii este necesar sa fie accesat endpointul printr-un GET in Postman: http://localhost:8099/middleware/results care va produce un JSON format, fisier text si Excel file.
 
 Excel file va stoca elemente in urmatorul format:
 Id	FirstName	LastName	MedieBac	NotaExamen	Medie	Clasificare
