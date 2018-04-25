@@ -29,11 +29,11 @@ public class PublishResultsController {
 
         Student[] students = dataInputController.getAllStudents();
 
-        //Integer buget = dataInputController.getNoBudget();//apelezi
-        //Integer fee = dataInputController.getTaxNo();//apelezi;
+        Integer buget = dataInputController.getNoBudget();//apelezi
+        Integer fee = dataInputController.getTaxNo();//apelezi;
 
-        Integer buget = 270;
-        Integer fee = 90;
+       // Integer buget = 270;
+      //  Integer fee = 90;
 
         Arrays.sort(students, Collections.reverseOrder());
 
