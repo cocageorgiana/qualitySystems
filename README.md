@@ -7,8 +7,12 @@ Adaugarea unui nou student - pentru a face INSERT din FE in BE un student este n
 
 Requestul de DELETE este accesat prin urmatorul URL: https://quality.cfapps.io/middleware/students?id=1 Acesta va sterge un student dupa un ID specificat
 
-Requestul de PUT este accesat prin urmatorul URL:  https://quality.cfapps.io/middleware/students?id=1 unde se modifica urmatoarele campuri: id, first_name, last_name, medie_bac si nota_examen. Acest endpoint permite modificarea datelor unui student. 
+Requestul de PUT este accesat prin urmatorul URL:  https://quality.cfapps.io/middleware/students?id=1 unde se modifica urmatoarele campuri: id, first_name, last_name, medie_bac si nota_examen. 
+
+Acest endpoint permite modificarea datelor unui student. 
+
 Excel file va stoca elemente in urmatorul format:
+
 Id	FirstName	LastName	MedieBac	NotaExamen	Medie	Clasificare
 4	  Irinel	  Ionescu	  10.0	    10.0	      10.0	  budget
  
