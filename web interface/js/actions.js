@@ -53,7 +53,7 @@ function sendStudentsFromFile() {
 
 }
 
-function showDeleteStudents() {
+/*function showDeleteStudents() {
 	$("#content").children("div").hide();
 	$("#deleteStudentsScreen").show();
 }
@@ -79,7 +79,7 @@ function deleteStudents() {
 		}
 
 	});
-}
+}*/
 
 function showViewStudents() {
 	$("#content").children("div").hide();
