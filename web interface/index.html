@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Software Quality Project Web Interface</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+
+    <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css">
+
+<script>
+    var admissionListData = [];
+</script>
+
+</head>
+<body>
+    <div class="container">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand" href="#">Software Quality Project</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent" style="margin-left: 40%;">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#" onclick="showHome();">Home <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Students
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="#" onclick="showAddStudent();">Add Student</a>
+                            <a class="dropdown-item" href="#" onclick="showDeleteStudents()">Delete Students</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#">Load Students from File</a>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showAdmissionList()">Admission List</a>
+                    </li>
+                </ul>
+
+            </div>
+        </nav>
+    </div>
+
+    <div id="content" class="container">
+        <div id="homeScreen" class="text-center" style="padding-top: 50px;">
+            <h1>Quality Software Systems Project</h1>
+
+            <div style="text-align: left;margin-top: 50px;">
+                <h3>Students:</h3>
+                <p style="padding-left: 20px;">Coca Georgiana<br />Atodiresei Sergiu<br />Bucur Irinel</p>
+            </div>
+        </div>
+
+        <div id="addStudentScreen" class="text-center" style="padding-top: 50px;display:none;">
+            <h1>Add a Student</h1>
+            <div style="text-align: left;margin-top:50px;">
+                <form id="addStudentForm" onsubmit="event.preventDefault(); addStudent();">
+                    <div class="form-row">
+                        <div class="col-4 form-group">
+                            <label for="first_name">First Name</label>
+                            <input type="text" class="form-control" id="first_name" placeholder="Enter student first name">
+                        </div>
+                        <div class="col-4 form-group">
+                            <label for="last_name">Last Name</label>
+                            <input type="text" class="form-control" id="last_name" placeholder="Enter student last name">
+                        </div>
+
+                        <div class="col-2 form-group">
+                            <label for="medie_bac">Medie Bac</label>
+                            <input type="number" class="form-control" id="medie_bac" min="0.00" max="10.00" step=".01" value="6.00">
+                        </div>
+                        <div class="col-2 form-group">
+                            <label for="nota_examen">Nota Examen</label>
+                            <input type="number" class="form-control" id="nota_examen" min="0.00" max="10.00" step=".01" value="0.00">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary float-right" style="margin-top:50px;">Add Student</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="deleteStudentsScreen" class="text-center" style="padding-top: 50px;display:none;">
+            <h1>Delete Students Database</h1>
+            <div style="text-align: center;margin-top:50px;">
+                <h3><p class="alert-danger">Attention! This will erase the entire content from the database.</p></h3>
+                <div style="text-align: center;">
+                    <button type="button" class="btn btn-danger align-self-center" style="margin-top:50px;" onclick="deleteStudents()">Delete Students Database</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="admissionListScreen" class="text-center" style="padding-top: 50px;display:none;">
+            <h1>Admission List</h1>
+            <div style="text-align: left;margin-top:50px;" id="admissionContentTable">
+                <table id="admissionTable" style="width:100%" class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Medie Bac</th>
+                        <th>Nota Examen</th>
+                        <th>Medie</th>
+                        <th>Clasificare</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <div style="text-align: center;">
+                    <button id="btnExportToExcel" type="button" class="btn btn-success" onclick="exportToExcel()" style="display: none;">Export to Excel</button>
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+
+    <script src="vendor/jquery/jquery-3.3.1.min.js"></script>
+    <script src="vendor/popper/popper.min.js"></script>
+    <script src="vendor/popper/tooltip.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+
+    <script type="text/javascript" src="vendor/excel/jszip.js"></script>
+    <script type="text/javascript" src="vendor/excel/FileSaver.js"></script>
+    <script type="text/javascript" src="vendor/excel/myexcel.js"></script>
+
+    <script src="js/actions.js"></script>
+
+</body>
+</html>
