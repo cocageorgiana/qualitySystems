@@ -81,6 +81,95 @@ function deleteStudents() {
 	});
 }
 
+function showViewStudents() {
+	$("#content").children("div").hide();
+	$("#viewStudentScreen").show();
+	$.ajax({
+		crossOrigin: true,
+		type: "GET",
+		url: "https://quality.cfapps.io/middleware/results",
+		success: function(data) {
+			// Here's where you handle a successful response.
+			//console.log(data);
+			if (data.length > 0)
+			{
+				admissionListData = data;
+			}
+
+			$("#studentsTable tbody").empty();
+			for (var i = 0, len = data.length; i < len; i++) {
+
+				$("#studentsTable").find('tbody')
+					.append($('<tr>')
+						.append($('<td>')
+							.text(data[i].first_name)
+						)
+						.append($('<td>')
+							.text(data[i].last_name)
+						)
+						.append($('<td>')
+							.text(data[i].medie_bac)
+						)
+						.append($('<td>')
+							.text(data[i].nota_examen)
+						)
+						.append($('<td>')
+							.append('<button type="button" class="btn btn-success" onClick="editStudent('+i+')" data-toggle="modal" data-target="#editModal">Edit</button> &nbsp;&nbsp;<button type="button" class="btn btn-danger" onClick="deleteStudent('+i+')">Delete</button>')
+						)
+					);
+			}
+		},
+
+		error: function(err) {
+			console.log(err);
+			alert("The students list load failed");
+		}
+
+	});
+}
+function editStudent(i) {
+	$("#edit_first_name").val(admissionListData[i].first_name);
+	$("#edit_last_name").val(admissionListData[i].last_name);
+	$("#edit_medie_bac").val(admissionListData[i].medie_bac);
+	$("#edit_nota_examen").val(admissionListData[i].nota_examen);
+	$("#edit_id").val(admissionListData[i].id);
+
+}
+
+function sendEditStudent() {
+	$.ajax({
+		crossOrigin: true,
+		type: "PUT",
+		url: "https://quality.cfapps.io/middleware/students?id="+$("#edit_id").val(),
+		data: {first_name: $("#edit_first_name").val(), last_name: $("#edit_last_name").val(), medie_bac: $("#edit_medie_bac").val(), nota_examen: $("#edit_nota_examen").val()},
+		success: function(data) {
+			console.log(data);
+			alert( "Student has been saved!");
+			showViewStudents();
+
+		},
+
+		error: function(err) {
+			console.log(err);
+			alert("Error when saving the Student");
+			showViewStudents();
+		}
+	});
+
+}
+
+function deleteStudent(i) {
+	$.get( "https://quality.cfapps.io/middleware/students", {id: admissionListData[i].id})
+		.done(function( data ) {
+			console.log(data);
+			alert( "Student has been deleted!");
+			showViewStudents();
+		})
+		.fail(function(err) {
+			console.log(err);
+			alert("Error when deleting the Student");
+		});
+}
 
 function showAdmissionList() {
 	$("#content").children("div").hide();
