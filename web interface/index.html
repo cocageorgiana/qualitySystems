@@ -36,7 +36,7 @@
                             <a class="dropdown-item" href="#" onclick="showAddStudent();">Add Student</a>
                             <a class="dropdown-item" href="#" onclick="showDeleteStudents()">Delete Students</a>
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="#">Load Students from File</a>
+                            <a class="dropdown-item" href="#" onclick="loadStudentsFromFile()">Load Students from File</a>
                         </div>
                     </li>
                     <li class="nav-item">
@@ -117,6 +117,24 @@
                     <button id="btnExportToExcel" type="button" class="btn btn-success" onclick="exportToExcel()" style="display: none;">Export to Excel</button>
                 </div>
 
+            </div>
+        </div>
+
+        <div id="loadStudentsFromFileScreen" class="text-center" style="padding-top: 50px;display:none;">
+            <h1>Admission List</h1>
+            <div style="text-align: left;margin-top:50px;">
+                <p>Please select the file to load data from</p>
+                <form id="loadFileForm" enctype="multipart/form-data"  onsubmit="event.preventDefault(); sendStudentsFromFile();">
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="studentsFile" required>
+                        <label class="custom-file-label" for="studentsFile">Choose file...</label>
+                        <div class="invalid-feedback">Example invalid custom file feedback</div>
+                    </div>
+
+                    <div style="text-align: right;margin-top:20px;">
+                        <button id="btnLoadStudentsFromFile" type="submit" class="btn btn-primary">Load Students</button>
+                    </div>
+                </form>
             </div>
         </div>
 

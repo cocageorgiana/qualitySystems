@@ -21,6 +21,38 @@ function addStudent() {
 		});
 }
 
+function loadStudentsFromFile() {
+	$("#content").children("div").hide();
+	$("#loadStudentsFromFileScreen").show();
+}
+
+function sendStudentsFromFile() {
+	$.ajax({
+		// Your server script to process the upload
+		url: 'https://quality.cfapps.io/middleware/loadStudentsFromFile',
+		type: 'POST',
+		data: new FormData($('#loadFileForm')[0]),
+		cache: false,
+		contentType: false,
+		processData: false,
+		success: function(data) {
+			// Here's where you handle a successful response.
+			console.log(data);
+			alert( "Students has been loaded!");
+		},
+
+		error: function(err) {
+			// Here's where you handle an error response.
+			// Note that if the error was due to a CORS issue,
+			// this function will still fire, but there won't be any additional
+			// information about the error.
+			console.log(err);
+			alert("Error when loading Students from File");
+		}
+	});
+
+}
+
 function showDeleteStudents() {
 	$("#content").children("div").hide();
 	$("#deleteStudentsScreen").show();
@@ -31,7 +63,7 @@ function deleteStudents() {
 		crossOrigin: true,
 		type: "DELETE",
 		url: "https://quality.cfapps.io/middleware/deleteStudents",
-		success: function() {
+		success: function(data) {
 			// Here's where you handle a successful response.
 			console.log(data);
 			alert( "Students database has been erased!");
@@ -57,7 +89,7 @@ function showAdmissionList() {
 	$.ajax({
 		crossOrigin: true,
 		type: "GET",
-		url: "https://ibucur.ima-solutions.ro/scoala/results.php",
+		url: "https://quality.cfapps.io/middleware/results",
 		success: function(data) {
 			// Here's where you handle a successful response.
 			//console.log(data);
