@@ -140,35 +140,42 @@ function sendEditStudent() {
 	$.ajax({
 		crossOrigin: true,
 		type: "PUT",
-		url: "https://quality.cfapps.io/middleware/students?id="+$("#edit_id").val(),
+		url: "https://quality.cfapps.io/middleware/students/"+$("#edit_id").val(),
 		data: {first_name: $("#edit_first_name").val(), last_name: $("#edit_last_name").val(), medie_bac: $("#edit_medie_bac").val(), nota_examen: $("#edit_nota_examen").val()},
 		success: function(data) {
 			console.log(data);
 			alert( "Student has been saved!");
-			showViewStudents();
-
 		},
 
 		error: function(err) {
 			console.log(err);
 			alert("Error when saving the Student");
-			showViewStudents();
 		}
+	})
+	.done(function( data ) {
+		showViewStudents();
 	});
 
 }
 
 function deleteStudent(i) {
-	$.get( "https://quality.cfapps.io/middleware/students", {id: admissionListData[i].id})
-		.done(function( data ) {
+	$.ajax({
+		crossOrigin: true,
+		type: "DELETE",
+		url: "https://quality.cfapps.io/middleware/students/" + admissionListData[i].id,
+		success: function (data) {
 			console.log(data);
-			alert( "Student has been deleted!");
-			showViewStudents();
-		})
-		.fail(function(err) {
+			alert("Student has been deleted!");
+		},
+		error: function (err) {
 			console.log(err);
 			alert("Error when deleting the Student");
-		});
+		}
+	})
+	.done(function( data ) {
+		showViewStudents();
+	});
+
 }
 
 function showAdmissionList() {
