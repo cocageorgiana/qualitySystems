@@ -143,17 +143,20 @@
             <h1>Admission List</h1>
             <div style="text-align: left;margin-top:50px;">
                 <p>Please select the file to load data from</p>
-                <form id="loadFileForm" enctype="multipart/form-data"  onsubmit="event.preventDefault(); sendStudentsFromFile();">
+                <!--<form id="loadFileForm" enctype="multipart/form-data"  onsubmit="event.preventDefault(); sendStudentsFromFile();">-->
                     <div class="custom-file">
                         <input type="file" class="custom-file-input" id="studentsFile" required>
                         <label class="custom-file-label" for="studentsFile">Choose file...</label>
                         <div class="invalid-feedback">Example invalid custom file feedback</div>
                     </div>
+                    <script>
+
+                    </script>
 
                     <div style="text-align: right;margin-top:20px;">
-                        <button id="btnLoadStudentsFromFile" type="submit" class="btn btn-primary">Load Students</button>
+                        <button id="btnLoadStudentsFromFile" type="button" class="btn btn-primary" style="display: none;" onclick="sendFileStudentsData()">Load Students</button>
                     </div>
-                </form>
+                <!--</form>-->
             </div>
         </div>
 

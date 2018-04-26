@@ -9,16 +9,20 @@ function showAddStudent() {
 }
 
 function addStudent() {
-	$.post( "https://quality.cfapps.io/middleware/createStudent", {first_name: $("#first_name").val(), last_name: $("#last_name").val(), medie_bac: $("#medie_bac").val(), nota_examen: $("#nota_examen").val()})
-		.done(function( data ) {
-			console.log(data);
-			alert( "Student has been added!");
-		})
-		.fail(function(err) {
-			console.log(err);
-			alert("Error when adding the Student");
+	sendAddStudent($("#first_name").val(), $("#last_name").val(), $("#medie_bac").val(), $("#nota_examen").val(), false);
+}
 
-		});
+function sendAddStudent(first_name, last_name, medie_bac, nota_examen, stripAlert) {
+	$.post( "https://quality.cfapps.io/middleware/createStudent", {first_name: first_name, last_name: last_name, medie_bac: medie_bac, nota_examen: nota_examen})
+	.done(function( data ) {
+		console.log(data);
+		if (!stripAlert) alert( "Student has been added!");
+	})
+	.fail(function(err) {
+		console.log(err);
+		if (!stripAlert) alert("Error when adding the Student");
+
+	});
 }
 
 function loadStudentsFromFile() {
@@ -27,7 +31,16 @@ function loadStudentsFromFile() {
 }
 
 function sendStudentsFromFile() {
+	console.log($('#studentsFile')[0].name);
+
 	$.ajax({
+		type: "GET",
+		url: $('#studentsFile')[0].name,
+		dataType: "text",
+		success: function(data) {console.log(data);}
+	});
+
+	/*$.ajax({
 		// Your server script to process the upload
 		url: 'https://quality.cfapps.io/middleware/loadStudentsFromFile',
 		type: 'POST',
@@ -49,7 +62,7 @@ function sendStudentsFromFile() {
 			console.log(err);
 			alert("Error when loading Students from File");
 		}
-	});
+	});*/
 
 }
 
@@ -289,3 +302,77 @@ function exportToExcel() {
 	excel.generate("admissionList.xlsx");
 }
 
+function loadFileContent(evt) {
+	var url;
+	var file;
+	file = evt.target.files[0];
+	reader = new FileReader();
+	//we need to instantiate a new FileReader object
+	reader.addEventListener("load", readFileContent, false);
+	//we add an event listener for when a file is loaded by the FileReader
+	//this will call our function 'readThumbNail()'
+
+	reader.readAsText(file);
+}
+
+function readFileContent(event) {
+	processFileData(event.target.result);
+}
+
+document.querySelector("#studentsFile").addEventListener('change',loadFileContent, false);
+
+function checkFieldsInFile(arr) {
+	var validFields = {"first_name":1, "last_name": 1, "medie_bac": 1, "nota_examen":1};
+	for (var i = 0; i < 4; i++) {
+		if (validFields[arr[i]]) delete validFields[arr[i]];
+		else {
+			return false;
+		}
+	}
+	return true;
+}
+
+var csvFileStudents = [];
+
+function processFileData(allText) {
+	csvFileStudents = [];
+	//console.log(allText);
+	var allTextLines = allText.split(/\r\n|\n/);
+	//console.log(allTextLines);
+	var headers = allTextLines[0].split(';');
+	console.log(headers);
+	var lines = [];
+
+	if (headers.length != 4) {
+		alert("The file does not have 4 column definition");
+	}
+	else if (!checkFieldsInFile(headers)) {
+		alert("The file does not have a correct column definition");
+	}
+	else {
+		for (var i=1; i<allTextLines.length; i++) {
+			var data = allTextLines[i].split(';');
+			if (data.length == headers.length) {
+
+				var tarr = {};
+				for (var j=0; j<headers.length; j++) {
+					tarr[headers[j]] = data[j];
+				}
+				lines.push(tarr);
+			}
+		}
+	}
+	csvFileStudents = lines;
+
+	$("#btnLoadStudentsFromFile").show();
+
+	// alert(lines);
+}
+
+function sendFileStudentsData() {
+	for (var i = 0; i < csvFileStudents.length; i++) {
+		sendAddStudent(csvFileStudents[i].first_name, csvFileStudents[i].last_name, csvFileStudents[i].medie_bac, csvFileStudents[i].nota_examen, true);
+	}
+	alert("File students has been loaded");
+	$("#btnLoadStudentsFromFile").hide();
+}
