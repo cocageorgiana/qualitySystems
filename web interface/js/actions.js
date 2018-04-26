@@ -9,62 +9,16 @@ function showAddStudent() {
 }
 
 function addStudent() {
-	console.log("Send student data: " + {first_name: $("#first_name").val(), last_name: $("#last_name").val(), medie_bac: $("#medie_bac").val(), nota_examen: $("#nota_examen").val()});
-	$.ajax({
-		crossOrigin: true,
-		type: "POST",
-		url: "https://quality.cfapps.io/middleware/createStudent",
-		xhrFields: {
-			// The 'xhrFields' property sets additional fields on the XMLHttpRequest.
-			// This can be used to set the 'withCredentials' property.
-			// Set the value to 'true' if you'd like to pass cookies to the server.
-			// If this is enabled, your server must respond with the header
-			// 'Access-Control-Allow-Credentials: true'.
-			withCredentials: false
-		},
-/*
-		headers: {
-			// Set any custom headers here.
-			// If you set any non-simple headers, your server must include these
-			// headers in the 'Access-Control-Allow-Headers' response header.
-			//"Access-Control-Allow-Headers": "X-Requested-With"
-		},
-*/
-		success: function() {
-			// Here's where you handle a successful response.
-			console.log(data);
-			alert( "Student has been added!");
-			$("#first_name").value = "";
-			$("#last_name").value = "";
-			$("#medie_bac").value = "6.00";
-			$("#nota_examen").value = "1.00";
-		},
-
-		error: function(err) {
-			// Here's where you handle an error response.
-			// Note that if the error was due to a CORS issue,
-			// this function will still fire, but there won't be any additional
-			// information about the error.
-			console.log(err);
-			alert("Error when adding the Student");
-		}
-
-	});
-
-	/*$.post( "https://quality.cfapps.io/middleware/createStudent", {first_name: $("#first_name").val(), last_name: $("#last_name").val(), medie_bac: $("#medie_bac").val(), nota_examen: $("#nota_examen").val()})
+	$.post( "https://quality.cfapps.io/middleware/createStudent", {first_name: $("#first_name").val(), last_name: $("#last_name").val(), medie_bac: $("#medie_bac").val(), nota_examen: $("#nota_examen").val()})
 		.done(function( data ) {
 			console.log(data);
 			alert( "Student has been added!");
-			$("#first_name").value = "";
-			$("#last_name").value = "";
-			$("#medie_bac").value = "6.00";
-			$("#nota_examen").value = "1.00";
 		})
 		.fail(function(err) {
 			console.log(err);
 			alert("Error when adding the Student");
 
-		});*/
+		});
 }
 
 function showDeleteStudents() {
