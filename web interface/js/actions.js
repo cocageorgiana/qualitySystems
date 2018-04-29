@@ -30,39 +30,20 @@ function loadStudentsFromFile() {
 	$("#loadStudentsFromFileScreen").show();
 }
 
-function sendStudentsFromFile() {
-	console.log($('#studentsFile')[0].name);
+
+function sendStudentsFromFile(postData) {
+	console.log(JSON.stringify(postData));
 
 	$.ajax({
-		type: "GET",
-		url: $('#studentsFile')[0].name,
-		dataType: "text",
-		success: function(data) {console.log(data);}
+		type: "POST",
+		url: "http://admissioncontest.us-east-2.elasticbeanstalk.com/AdmissionContestServlet",
+		data: JSON.stringify(postData),
+		contentType: false,
+		processType: false,
+		success: function(data) {console.log(data);alert( "Students has been added!");},
+		error: function(data) {console.log(data);alert( "Error when adding the Students!");}
 	});
 
-	/*$.ajax({
-		// Your server script to process the upload
-		url: 'https://quality.cfapps.io/middleware/loadStudentsFromFile',
-		type: 'POST',
-		data: new FormData($('#loadFileForm')[0]),
-		cache: false,
-		contentType: false,
-		processData: false,
-		success: function(data) {
-			// Here's where you handle a successful response.
-			console.log(data);
-			alert( "Students has been loaded!");
-		},
-
-		error: function(err) {
-			// Here's where you handle an error response.
-			// Note that if the error was due to a CORS issue,
-			// this function will still fire, but there won't be any additional
-			// information about the error.
-			console.log(err);
-			alert("Error when loading Students from File");
-		}
-	});*/
 
 }
 
@@ -370,9 +351,15 @@ function processFileData(allText) {
 }
 
 function sendFileStudentsData() {
+	var post = {
+		"operation": "insert_array",
+		"into": "students",
+		"values_array": []
+	};
+
 	for (var i = 0; i < csvFileStudents.length; i++) {
-		sendAddStudent(csvFileStudents[i].first_name, csvFileStudents[i].last_name, csvFileStudents[i].medie_bac, csvFileStudents[i].nota_examen, true);
+		post.values_array.push({"first_name": csvFileStudents[i].first_name, "last_name": csvFileStudents[i].last_name, "medie_bac":parseFloat(csvFileStudents[i].medie_bac), "nota_examen": parseFloat(csvFileStudents[i].nota_examen)});
 	}
-	alert("File students has been loaded");
+	sendStudentsFromFile(post);
 	$("#btnLoadStudentsFromFile").hide();
 }
