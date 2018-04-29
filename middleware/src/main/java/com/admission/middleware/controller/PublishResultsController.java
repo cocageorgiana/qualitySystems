@@ -49,6 +49,7 @@ public class PublishResultsController {
                 buget--;
             } else if (fee > 0) {
                 classifyStudent.setClassification("fee");
+                fee--;
             } else {
                 classifyStudent.setClassification("respins");
             }
