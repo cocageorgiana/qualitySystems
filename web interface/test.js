@@ -1,3 +1,4 @@
+require("./index.js");
 var Browser = require('zombie');
 var assert = require('assert');
 var util = require('util');
