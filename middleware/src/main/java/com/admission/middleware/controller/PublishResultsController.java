@@ -5,6 +5,7 @@ import com.admission.middleware.file.WriteFile;
 import com.admission.middleware.model.ClassifyStudent;
 import com.admission.middleware.model.Student;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
 @CrossOrigin
 @RestController
 public class PublishResultsController {
@@ -32,11 +34,7 @@ public class PublishResultsController {
         Integer buget = dataInputController.getNoBudget();//apelezi
         Integer fee = dataInputController.getTaxNo();//apelezi;
 
-       // Integer buget = 270;
-      //  Integer fee = 90;
-
         Arrays.sort(students, Collections.reverseOrder());
-
 
         int iterator = 0;
 
