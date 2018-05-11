@@ -33,7 +33,7 @@
                             Students
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="#" onclick="showAddStudent();">Add Student</a>
+                            <a class="dropdown-item" href="#" id="addAStudent" onclick="showAddStudent();">Add Student</a>
                             <a class="dropdown-item" href="#" onclick="showViewStudents();">Edit/Delete Student</a>
                             <!--<a class="dropdown-item" href="#" onclick="showDeleteStudents()">Delete Students</a>-->
                             <div class="dropdown-divider"></div>
@@ -82,8 +82,9 @@
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary float-right" style="margin-top:50px;">Add Student</button>
+                    <button type="submit" class="btn btn-primary float-right" id="btnAddAStudent" style="margin-top:50px;">Add Student</button>
                 </form>
+                <div id="addStatus" style="text-align: center;width: 100%;"></div>
             </div>
         </div>
 

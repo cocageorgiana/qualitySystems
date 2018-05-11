@@ -6,6 +6,7 @@ function showHome() {
 function showAddStudent() {
 	$("#content").children("div").hide();
 	$("#addStudentScreen").show();
+	$("#addStatus").html('caca maca');
 }
 
 function addStudent() {
@@ -15,12 +16,12 @@ function addStudent() {
 function sendAddStudent(first_name, last_name, medie_bac, nota_examen, stripAlert) {
 	$.post( "https://quality.cfapps.io/middleware/createStudent", {first_name: first_name, last_name: last_name, medie_bac: medie_bac, nota_examen: nota_examen})
 	.done(function( data ) {
-		console.log(data);
-		if (!stripAlert) alert( "Student has been added!");
+		//console.log(data);
+		if (!stripAlert) $("#addStatus").html("Student has been added!");
 	})
 	.fail(function(err) {
-		console.log(err);
-		if (!stripAlert) alert("Error when adding the Student");
+		//console.log(err);
+		if (!stripAlert) $("#addStatus").html("Error when adding the Student");
 
 	});
 }
