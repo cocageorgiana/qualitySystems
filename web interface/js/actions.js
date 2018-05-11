@@ -20,6 +20,7 @@ function sendAddStudent(first_name, last_name, medie_bac, nota_examen, stripAler
 		if (!stripAlert) $("#addStatus").html("Student has been added!");
 	})
 	.fail(function(err) {
+		//console.log("FAILED request "+err.statusText);
 		//console.log(err);
 		if (!stripAlert) $("#addStatus").html("Error when adding the Student");
 
@@ -116,7 +117,7 @@ function showViewStudents() {
 		},
 
 		error: function(err) {
-			console.log(err);
+			//console.log(err);
 			alert("The students list load failed");
 		}
 
@@ -219,7 +220,7 @@ function showAdmissionList() {
 		},
 
 		error: function(err) {
-			console.log(err);
+			//console.log(err);
 			alert("The admission list load failed");
 		}
 
