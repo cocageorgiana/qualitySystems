@@ -174,6 +174,41 @@ function deleteStudent(i) {
 
 }
 
+function populateAdmissionList(data) {
+	if (data.length > 0)
+	{
+		admissionListData = data;
+	}
+
+	$("#admissionTable tbody").empty();
+	for (var i = 0, len = data.length; i < len; i++) {
+
+		$("#admissionTable").find('tbody')
+			.append($('<tr>')
+				.append($('<td>')
+					.text(data[i].first_name)
+				)
+				.append($('<td>')
+					.text(data[i].last_name)
+				)
+				.append($('<td>')
+					.text(data[i].medie_bac)
+				)
+				.append($('<td>')
+					.text(data[i].nota_examen)
+				)
+				.append($('<td>')
+					.text(data[i].medie)
+				)
+				.append($('<td>')
+					.text(data[i].classification)
+				)
+			);
+	}
+
+	$("#btnExportToExcel").show();
+}
+
 function showAdmissionList() {
 	$("#content").children("div").hide();
 	$("#admissionListScreen").show();
@@ -185,38 +220,7 @@ function showAdmissionList() {
 		success: function(data) {
 			// Here's where you handle a successful response.
 			//console.log(data);
-			if (data.length > 0)
-			{
-				admissionListData = data;
-			}
-
-			$("#admissionTable tbody").empty();
-			for (var i = 0, len = data.length; i < len; i++) {
-
-				$("#admissionTable").find('tbody')
-					.append($('<tr>')
-						.append($('<td>')
-							.text(data[i].first_name)
-						)
-						.append($('<td>')
-							.text(data[i].last_name)
-						)
-						.append($('<td>')
-							.text(data[i].medie_bac)
-						)
-						.append($('<td>')
-							.text(data[i].nota_examen)
-						)
-						.append($('<td>')
-							.text(data[i].medie)
-						)
-						.append($('<td>')
-							.text(data[i].classification)
-						)
-					);
-			}
-
-			$("#btnExportToExcel").show();
+			populateAdmissionList(data);
 		},
 
 		error: function(err) {

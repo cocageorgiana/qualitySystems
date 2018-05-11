@@ -109,6 +109,12 @@ describe('User visits Add a Student', function() {
             browser.wait();
             browser.assert.style('#admissionListScreen:not(.hidden)', 'display', '');
         } );
+
+        it( 'should properly populate data', function() {
+           browser.evaluate('populateAdmissionList([{first_name:"Ion",last_name:"Mihai",medie_bac:9,nota_examen:10,medie:9.5,classification:"buget"}])');
+           browser.wait();
+           browser.assert.style('#btnExportToExcel:not(.hidden)', 'display', '');
+        });
     });
 });
 
