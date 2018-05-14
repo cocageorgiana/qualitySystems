@@ -1,7 +1,5 @@
 package com.admission.middleware.controller;
 
-import com.admission.middleware.file.WriteExcel;
-import com.admission.middleware.file.WriteFile;
 import com.admission.middleware.model.ClassifyStudent;
 import com.admission.middleware.model.Student;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +7,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,8 +21,6 @@ public class PublishResultsController {
 
     @RequestMapping(path = "results", method = RequestMethod.GET, produces = "application/json")
     public List<ClassifyStudent> classifyStudent() {
-        WriteFile file = new WriteFile();
-        WriteExcel excel = new WriteExcel();
 
         List<ClassifyStudent> classifyStudents = new ArrayList<>();
 
@@ -55,8 +50,6 @@ public class PublishResultsController {
             iterator++;
         }
 
-        file.writeFile(classifyStudents);
-        excel.storeIntoExcel(classifyStudents);
         return classifyStudents;
     }
 
