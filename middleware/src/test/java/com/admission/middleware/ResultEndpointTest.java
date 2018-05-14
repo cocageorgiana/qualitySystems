@@ -1,40 +1,78 @@
 package com.admission.middleware;
 
+import com.admission.middleware.controller.DataInputController;
+import com.admission.middleware.controller.PublishResultsController;
+import com.admission.middleware.model.Student;
 import org.json.JSONException;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.*;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = MiddlewareApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest
 public class ResultEndpointTest {
+    private MockMvc mockMvc;
 
-    @LocalServerPort
-    public int port;
+    @Mock
+    DataInputController dataInputController;
 
-    @Test
-    public void testRetrieveStudentCourse() throws JSONException {
-        HttpHeaders headers = new HttpHeaders();
+    @InjectMocks
+    private PublishResultsController publishResultsController;
 
-        TestRestTemplate restTemplate = new TestRestTemplate();
-
-        HttpEntity<String> entity = new HttpEntity<String>(null, headers);
-
-        ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort("middleware/results"),
-                HttpMethod.GET, entity, String.class);
-
-        String expected = "[{\"classification\":\"budget\",\"id\":18,\"first_name\":\"Ciprian-Gabriel\",\"last_name\":\"Cusmuliuc\",\"medie_bac\":10.0,\"nota_examen\":10.0,\"medie\":10.0},{\"classification\":\"budget\",\"id\":3,\"first_name\":\"Ionel\",\"last_name\":\"Port\",\"medie_bac\":10.0,\"nota_examen\":9.0,\"medie\":9.5},{\"classification\":\"budget\",\"id\":12,\"first_name\":\"Vasile\",\"last_name\":\"Grigore\",\"medie_bac\":8.45,\"nota_examen\":9.2,\"medie\":8.825},{\"classification\":\"budget\",\"id\":13,\"first_name\":\"Vasile\",\"last_name\":\"Grigore\",\"medie_bac\":8.45,\"nota_examen\":9.2,\"medie\":8.825},{\"classification\":\"budget\",\"id\":15,\"first_name\":\"Vasile\",\"last_name\":\"Grigore\",\"medie_bac\":8.0,\"nota_examen\":9.0,\"medie\":8.5},{\"classification\":\"fee\",\"id\":17,\"first_name\":\"Vasile\",\"last_name\":\"Grigore\",\"medie_bac\":8.0,\"nota_examen\":9.0,\"medie\":8.5},{\"classification\":\"fee\",\"id\":5,\"first_name\":\"popescu\",\"last_name\":\"ionel\",\"medie_bac\":8.0,\"nota_examen\":8.0,\"medie\":8.0},{\"classification\":\"fee\",\"id\":9,\"first_name\":\"test\",\"last_name\":\"test now 2\",\"medie_bac\":6.98,\"nota_examen\":9.0,\"medie\":7.99},{\"classification\":\"fee\",\"id\":14,\"first_name\":\"Mircea\",\"last_name\":\"Mihai\",\"medie_bac\":8.0,\"nota_examen\":7.0,\"medie\":7.5},{\"classification\":\"fee\",\"id\":16,\"first_name\":\"Mircea\",\"last_name\":\"Mihai\",\"medie_bac\":8.0,\"nota_examen\":7.0,\"medie\":7.5},{\"classification\":\"respins\",\"id\":8,\"first_name\":\"test\",\"last_name\":\"test now\",\"medie_bac\":6.98,\"nota_examen\":8.0,\"medie\":7.49},{\"classification\":\"respins\",\"id\":11,\"first_name\":\"ion\",\"last_name\":\"ion\",\"medie_bac\":9.0,\"nota_examen\":5.0,\"medie\":7.0},{\"classification\":\"respins\",\"id\":10,\"first_name\":\"Dorian\",\"last_name\":\"Ion\",\"medie_bac\":5.0,\"nota_examen\":5.0,\"medie\":5.0},{\"classification\":\"respins\",\"id\":6,\"first_name\":\"test nou\",\"last_name\":\"test\",\"medie_bac\":6.98,\"nota_examen\":0.01,\"medie\":3.495}]";
-
-        JSONAssert.assertEquals(expected, response.getBody(), false);
+    @Before
+    public void init() {
+        MockitoAnnotations.initMocks(this);
+        mockMvc = MockMvcBuilders
+                .standaloneSetup(publishResultsController)
+                .build();
     }
 
-    private String createURLWithPort(String uri) {
-        return "http://localhost:" + port + uri;
+    @Test
+    public void classifyStudentTest() throws Exception{
+        when(dataInputController.getAllStudents()).thenReturn(createStudents());
+        when(dataInputController.getNoBudget()).thenReturn(1);
+        when(dataInputController.getTaxNo()).thenReturn(1);
+
+        String expected = "[{\"classification\":\"budget\",\"id\":2,\"first_name\":\"Ion\",\"last_name\":\"Andrei\",\"medie_bac\":10.0,\"nota_examen\":10.0,\"medie\":10.0},{\"classification\":\"fee\",\"id\":1,\"first_name\":\"Ion\",\"last_name\":\"Bogdan\",\"medie_bac\":7.0,\"nota_examen\":7.0,\"medie\":7.0}]";
+
+        this.mockMvc.perform(get("/results")).andExpect(status().isOk()).andReturn().getResponse().getContentAsString().contains(expected);
+    }
+
+    private Student[] createStudents() {
+        Student bogdan = new Student();
+        bogdan.setId(1);
+        bogdan.setLast_name("Bogdan");
+        bogdan.setFirst_name("Ion");
+        bogdan.setMedie_bac(7.0);
+        bogdan.setNota_examen(7.0);
+        bogdan.setMedie(7.0);
+
+        Student andrei = new Student();
+        andrei.setId(2);
+        andrei.setLast_name("Andrei");
+        andrei.setFirst_name("Ion");
+        andrei.setMedie_bac(10.0);
+        andrei.setNota_examen(10.0);
+        andrei.setMedie(10.0);
+
+        Student[] students = new Student[2];
+        students[0] = bogdan;
+        students[1] = andrei;
+        return students;
     }
 }
