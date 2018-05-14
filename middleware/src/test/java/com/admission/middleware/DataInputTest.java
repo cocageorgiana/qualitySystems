@@ -44,7 +44,6 @@ public class DataInputTest {
     }
 
     @Test
-
     public void getAllStudents() throws Exception {
         String param = " {\n" +
                 "          \t\"operation\": \"select\",\n" +
@@ -106,6 +105,28 @@ public class DataInputTest {
     }
 
     @Test
+    public void deleteStudentBadRequest() throws Exception {
+        Integer id = 3;
+
+        String param = "{\n" +
+                "\t\"operation\": \"delete\",\n" +
+                "\t\"from\": \"students\",\n" +
+                "\t\"cond1\": {\n" +
+                "\t\t\"key\": \"id\",\n" +
+                "\t\t\"operator\": \"=\",\n" +
+                "\t\t\"value\": \"" + id + "\"\n" +
+                "\t\t}\n" +
+                "}";
+
+
+        when(restTemplate.postForObject(url, param, String.class)).thenReturn("{\"response\": -1}");
+
+        this.mockMvc.perform(delete("/students/3")
+                .accept(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest());
+
+    }
+
+    @Test
     public void getStudent() throws Exception {
         Integer id = 3;
 
@@ -158,6 +179,39 @@ public class DataInputTest {
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(new ObjectMapper().writeValueAsString(student)))
                 .andExpect(status().isOk());
+
+
+    }
+
+    @Test
+    public void updateStudentBadRequest() throws Exception {
+        Student student = createTestStudent();
+
+        Integer id = 3;
+
+        String request = "{\n" +
+                "\t\"operation\": \"update\",\n" +
+                "\t\"into\": \"students\",\n" +
+                "\t\"values\": {\n" +
+                "\t\t\"first_name\": \"" + student.getFirst_name() + "\",\n" +
+                "\t\t\"last_name\": \"" + student.getLast_name() + "\",\n" +
+                "\t\t\"medie_bac\": " + student.getMedie_bac() + ",\n" +
+                "\t\t\"nota_examen\": " + student.getNota_examen() + "\n" +
+                "\t}\n,\"" +
+                "cond1\": {\n" +
+                "\t\t\"key\": \"id\",\n" +
+                "\t\t\"operator\": \"=\",\n" +
+                "\t\t\"value\": " + id + "\n" +
+                "\t\t}" +
+                "}";
+
+
+        when(restTemplate.postForObject(url, request, String.class)).thenReturn("{\"response\": -1}");
+
+        mockMvc.perform(put("/students/3")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(new ObjectMapper().writeValueAsString(student)))
+                .andExpect(status().isBadRequest());
 
 
     }
