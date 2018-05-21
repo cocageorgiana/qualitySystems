@@ -1,0 +1,197 @@
+package com.admission.middleware.assertion;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import javax.sql.DataSource;
+
+import com.admission.middleware.model.Admitere;
+import com.admission.middleware.model.Student;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.*;
+import org.springframework.test.context.junit4.SpringRunner;
+
+
+import javax.sql.DataSource;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+public class DatabaseIntegrationTest {
+
+    private int port;
+    TestRestTemplate restTemplate;
+    HttpHeaders headers;
+
+    @Before
+    public void setUp() {
+        restTemplate = new TestRestTemplate();
+        headers = new HttpHeaders();
+    }
+
+    private String createURLWithPort(String uri) {
+        return "http://admissioncontest.us-east-2.elasticbeanstalk.com/AdmissionContestServlet" + uri;
+
+    }
+
+    private String createURLAndPort(String uri) {
+        return "https://quality.cfapps.io/middleware/" + uri;
+
+    }
+
+    @Test
+    public void testNotFoundStudent() {
+        String param = " {\n" +
+                "          \t\"operation\": \"select\",\n" +
+                "          \t\"from\": \"students\"\n" +
+                "          }";
+
+        HttpEntity<String> entity = new HttpEntity<String>(param, headers);
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/students.json"), HttpMethod.GET,
+                entity, String.class);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    public void testNotFoundtStudent() throws Exception {
+        Integer id = 3;
+
+        String param = "{\n" +
+                "\t\"operation\": \"select\",\n" +
+                "\t\"from\": \"students\",\n" +
+                "\t\"cond1\": {\n" +
+                "\t\t\"key\": \"id\",\n" +
+                "\t\t\"operator\": \"=\",\n" +
+                "\t\t\"value\": \"" + id + "\"\n" +
+                "\t\t}\n" +
+                "}";
+
+        Student[] students = new Student[1];
+        students[0] = createTestStudent();
+        HttpEntity<String> entity = new HttpEntity<String>(param, headers);
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/students/3"), HttpMethod.GET,
+                entity, String.class);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    public void getOkStudent() throws Exception {
+
+
+        Student[] students = new Student[1];
+        students[0] = createTestStudent();
+
+        HttpEntity<String> entity = new HttpEntity<String>(null, headers);
+        ResponseEntity<String> response = restTemplate.exchange(createURLAndPort("/students/3"), HttpMethod.GET,
+                entity, String.class);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    public void testMethodNotAllowed() throws Exception {
+        Integer id = 3;
+
+        String param = "{\n" +
+                "\t\"operation\": \"select\",\n" +
+                "\t\"from\": \"students\",\n" +
+                "\t\"cond1\": {\n" +
+                "\t\t\"key\": \"id\",\n" +
+                "\t\t\"operator\": \"=\",\n" +
+                "\t\t\"value\": \"" + id + "\"\n" +
+                "\t\t}\n" +
+                "}";
+
+        Student[] students = new Student[1];
+        students[0] = createTestStudent();
+
+        HttpEntity<String> entity = new HttpEntity<String>(param, headers);
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(""), HttpMethod.PUT,
+                entity, String.class);
+        assertEquals(HttpStatus.METHOD_NOT_ALLOWED, response.getStatusCode());
+    }
+
+
+    @Test
+    public void testDeleteStudent() {
+        Student student = new Student();
+
+        Integer id = 3;
+
+        String request = "{\n" +
+                "\t\"operation\": \"update\",\n" +
+                "\t\"into\": \"students\",\n" +
+                "\t\"values\": {\n" +
+                "\t\t\"first_name\": \"" + student.getFirst_name() + "\",\n" +
+                "\t\t\"last_name\": \"" + student.getLast_name() + "\",\n" +
+                "\t\t\"medie_bac\": " + student.getMedie_bac() + ",\n" +
+                "\t\t\"nota_examen\": " + student.getNota_examen() + "\n" +
+                "\t}\n,\"" +
+                "cond1\": {\n" +
+                "\t\t\"key\": \"id\",\n" +
+                "\t\t\"operator\": \"=\",\n" +
+                "\t\t\"value\": " + id + "\n" +
+                "\t\t}" +
+                "}";
+
+        HttpEntity<String> entity = new HttpEntity<String>(request, headers);
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/students/3"), HttpMethod.DELETE,
+                entity, String.class);
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+    }
+
+    @Test
+    public void updateStudentBadRequest() throws Exception {
+        Student student = createTestStudent();
+
+        Integer id = 3;
+
+        String request = "{\n" +
+                "\t\"operation\": \"update\",\n" +
+                "\t\"into\": \"students\",\n" +
+                "\t\"values\": {\n" +
+                "\t\t\"first_name\": \"" + student.getFirst_name() + "\",\n" +
+                "\t\t\"last_name\": \"" + student.getLast_name() + "\",\n" +
+                "\t\t\"medie_bac\": " + student.getMedie_bac() + ",\n" +
+                "\t\t\"nota_examen\": " + student.getNota_examen() + "\n" +
+                "\t}\n,\"" +
+                "cond1\": {\n" +
+                "\t\t\"key\": \"id\",\n" +
+                "\t\t\"operator\": \"=\",\n" +
+                "\t\t\"value\": " + id + "\n" +
+                "\t\t}" +
+                "}";
+
+        HttpEntity<String> entity = new HttpEntity<String>(request, headers);
+        ResponseEntity<String> response = restTemplate.exchange(createURLAndPort("/students/3"), HttpMethod.PUT,
+                entity, String.class);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+
+    }
+    private Admitere createTestAdmitere() {
+        Admitere admitere = new Admitere();
+
+        admitere.setNr_locuri_buget(1);
+        admitere.setNr_locuri_taxa(1);
+        return admitere;
+    }
+
+    private Student createTestStudent() {
+        Student student = new Student();
+        student.setLast_name("Bogdan");
+        student.setFirst_name("Ion");
+        student.setMedie_bac(6.7);
+        student.setNota_examen(4.4);
+        student.setMedie(5.32);
+        return student;
+    }
+}
